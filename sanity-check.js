@@ -257,7 +257,7 @@ async function main(
         output += `<td class="border border-gray-300 px-4 py-2">${formName}</td>`;
         output += `<td class="border border-gray-300 px-4 py-2">${env1Count}</td>`;
         output += `<td class="border border-gray-300 px-4 py-2">${env2Count}</td>`;
-        output += `<td class="border border-gray-300 px-4 py-2">${env1Count === env2Count}</td>`;
+        output += `<td class="border border-gray-300 px-4 py-2">${env1Count === env2Count ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>'}</td>`;
         output += '</tr>';
     }
     

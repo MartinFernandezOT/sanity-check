@@ -184,7 +184,7 @@ async function main(
     }
 
     await Promise.all(promises)
-    .then(responses => {
+    .then(async responses => {
         output += `
             <h1 class="text-lg font-semibold mb-4">Form Templates</h1>
             <p class="mb-4">The following templates were checked if they are accessible from the API</p>
@@ -200,14 +200,15 @@ async function main(
         `;
 
         for (const response of responses) {
+            const result = await response.json();
             const templateIdRegex = /formtemplates\/(\S+)\//;
             const templateIdMatch = response.url.match(templateIdRegex);
             const template = templatesEnvironment2.find(template => template.id === templateIdMatch[1]);
             const templateUrl = `<tr class="border border-gray-300"><td class="border border-gray-300 px-4 py-2"><a href="${response.url}" target="_blank">${template.name}</a></td>`;
-            if (response.ok) {
+            if (result.meta.status === 200) {
                 output += `${templateUrl} <td class="border border-gray-300 px-4 py-2" style="color:green">OK</td></tr>`;
             } else {
-                output += `${templateUrl} <td class="border border-gray-300 px-4 py-2" style="color:red">${response.statusText}</td></tr>`;
+                output += `${templateUrl} <td class="border border-gray-300 px-4 py-2" style="color:red">${result.meta.errors[0].developerMessage}</td></tr>`;
             }
         }
         output += '</tbody></table></div>';

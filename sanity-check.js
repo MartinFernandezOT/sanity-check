@@ -267,8 +267,41 @@ async function main(
             </table>
         </div>
     `;
+
+    // Web Services
+    let webServicesEnv1 = await vvClient1.outsideProcesses.getOutsideProcesses()
+        .then(res => parseRes(res))
+        .then(res => checkMetaAndStatus(res))
+        .then(res => checkDataPropertyExists(res))
+        .then(res => checkDataIsNotEmpty(res));
+    let webServicesEnv2 = await vvClient2.outsideProcesses.getOutsideProcesses()
+        .then(res => parseRes(res))
+        .then(res => checkMetaAndStatus(res))
+        .then(res => checkDataPropertyExists(res))
+        .then(res => checkDataIsNotEmpty(res));
+
+    webServicesEnv1 = webServicesEnv1.data;
+    webServicesEnv2 = webServicesEnv2.data;
+
+    const missingScripts = webServicesEnv1.filter(ws1 => !webServicesEnv2.some(ws2 => ws1.name === ws2.name));
+
+    output += `
+        <h1 class="text-xl font-semibold mt-6 mb-4">Web Services</h1>
+        <p>Web Services on ${environmentName1} that are not on ${environmentName2}:</p>
+        <div class="overflow-x-auto mt-4">
+            <ul>
+    `;
+
+    for (const missingScript of missingScripts) {
+        output += `<li>${missingScript.name}</li>`;
+    }
+
+    output += `</ul>
+        </div>
+    `;
     
     
+    // End
     output += `
                 </div>
             </body>
